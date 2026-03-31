@@ -11,7 +11,7 @@ const authors = [
 // a small query function that we can call to get the author id 
 async function getAuthorById(authorId) {
     return authors.find(author => {
-        author.id === authorId
+       return author.id === authorId
     });
 }
 
