@@ -44,27 +44,55 @@ This handler in authorRouter.js will only be caught IF the main request URL is e
 ex: route parameter
 
 something.get("/:IamRouteParameter", (req,res) => {
-    
+
     const {IamRouteParameter} = req.params;
+
 });
 
 - Query parameters are similar to route parameters, but they are denoted past the URL after the ? and separated by & symbols. They are each assigned through an object through key value pairs, and if there are multiple of the same keys, the object assigns the, to the same key through the use of an array. Can be accessed through the request object. (req.query)
 
 ex: query parameter
 
-** if the URL link for the get request was: 
+\*\* if the URL link for the get request was:
 
 localhost:3000/IamAPath?sort=date&key2=something&key2=somethingElse
 
-
 something.get("/IamAPath", (req,res) => {
-    
+
     console.log(req.query)
+
 });
 
 req.query would print: {sort: "date", key2: ["something", "somethingElse"]}
 
 NOTE: query params are in the URL itself, not defined in the actual .get() method path. We can access those optional query parameters to handle in the middleware with req.query.
+
+## middleware controllers
+
+- A middleware controller is the specific middleware in a chain of middleware that handles the specific logic
+  of what the request handler is trying to do. In this case, I made a authorController.js that specifically handles the
+  case of returning the author's ID with a HTTP response of the author's name and id.
+
+## error handling with error middlewares
+
+- There are 2 main ways that were shown on how to handle errors inside our controller middlewares:
+        
+        - (Not recommended) Manually putting a try/catch block and manually throwing an error and sending it as an HTTP response
+
+        - (Recommended) Making a dedicated error catching middleware that is defined as the last middleware in the middleware definitions. An error middleware is defined as always having 4 main parameters, where the error thrown is ALWAYS the first parameter and the other parameters are defined EVEN if they aren't explicitly used. Any error thrown inside any other middleware or controller will automatically be handled by the error catching middleware (by the use of next(error) which express automatically catches).
+
+            - As mentioned before, the error catching middleware will always have 4 parameters defined in it's callback. Missing one parameter will make the error middleware not considered a error catching middleware. The structure looks like this: 
+
+            note: error middleware is an express app-level middleware, so define it on the express app. 
+
+            app.use((err, req, res, next) => {
+
+                console.error(err);
+
+                res.status(err.statusCode || 500).send(err.message);
+            });
+
+            -  Custom made error classes can be defined and used inside the error middleware. Used to customize specific error messages and status codes.
 
 ## Postman
 
@@ -77,3 +105,5 @@ NOTE: query params are in the URL itself, not defined in the actual .get() metho
 node --watch app.js
 
 - make sure to "npm install" all dependencies required for this project before running.
+
+- note: locally, the folder is directory is called "External-router-practice", need to come up with a better project naming convention for node.js projects.
